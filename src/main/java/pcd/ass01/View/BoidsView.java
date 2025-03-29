@@ -1,5 +1,6 @@
 package pcd.ass01.View;
 
+import pcd.ass01.Controller.ExecutionModes;
 import pcd.ass01.Controller.SimulationStateHandler;
 import pcd.ass01.Model.BoidsProperty;
 
@@ -82,12 +83,18 @@ public class BoidsView implements ChangeListener {
     private JPanel createButtonsPanel() {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
 
+        JComboBox<ExecutionModes> comboBox = new JComboBox<>(ExecutionModes.values());
+        comboBox.addActionListener(e -> {
+            ExecutionModes selected = (ExecutionModes) comboBox.getSelectedItem();
+        });
+
         pauseResumeButton = new JButton("Pause");
         pauseResumeButton.addActionListener(e -> toggleSimulationState());
 
         simulationModeButton = new JButton("Stop");
         simulationModeButton.addActionListener(e -> toggleStopSimulation());
 
+        buttonsPanel.add(comboBox);
         buttonsPanel.add(pauseResumeButton);
         buttonsPanel.add(simulationModeButton);
 
@@ -121,7 +128,7 @@ public class BoidsView implements ChangeListener {
             }
             simulationStateHandler.start();
         }
-        
+
         simulationModeButton.setText(boidsProperty.isRunning() ?  "Stop" : "Start");
     }
 
