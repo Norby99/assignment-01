@@ -19,6 +19,8 @@ public class BoidsExecutor implements ParallelController, SimulationStateHandler
     private int numberOfThreads;
     private BoidPatterns boidPatterns;
 
+    private boolean isInitialized = false;
+
     public BoidsExecutor(BoidsModel model) {
         this.model = model;
         this.boidPatterns = new BoidPatterns();
@@ -26,10 +28,14 @@ public class BoidsExecutor implements ParallelController, SimulationStateHandler
     }
 
     public synchronized void start() {
+        isInitialized = true;
         boidRunners = Executors.newFixedThreadPool(numberOfThreads);
     }
 
     public synchronized void update() {
+        if (!isInitialized) {
+            return;
+        }
         if (model.isSuspended() || boidRunners.isShutdown()) {
             return;
         }

@@ -7,12 +7,14 @@ import pcd.ass01.View.BoidsView;
 
 import java.util.Optional;
 
-public class BoidsSimulator {
+public class BoidsSimulator implements ModeChanger {
 
     private final BoidsModel model;
 
     private Optional<BoidsView> view;
     private ParallelController parallelController;
+
+    private ExecutionModes executionMode;
 
     private static final int FRAMERATE = 25;
     private int framerate;
@@ -26,23 +28,43 @@ public class BoidsSimulator {
     }
 
     private void setupBoidsMultithreaded() {
+        executionMode = ExecutionModes.MULTITHREADDED;
         stopSimulation();
         BoidsMultithreaded boidsMultithreaded = new BoidsMultithreaded(model);
         parallelController = boidsMultithreaded;
-        view.ifPresent(boidsView -> boidsView.setSimulationStateHandler(boidsMultithreaded));
+        view.ifPresent(boidsView -> boidsView.setModeChanger(this, boidsMultithreaded));
     }
 
     private void setupBoidsExecutor() {
+        System.out.println("---");
+        executionMode = ExecutionModes.EXECUTOR;
         stopSimulation();
         BoidsExecutor boidsExecutor = new BoidsExecutor(model);
         parallelController = boidsExecutor;
-        view.ifPresent(boidsView -> boidsView.setSimulationStateHandler(boidsExecutor));
+        view.ifPresent(boidsView -> boidsView.setModeChanger(this, boidsExecutor));
+    }
+
+    @Override
+    public void changeMode(ExecutionModes executionModes) {
+        if (executionModes == ExecutionModes.MULTITHREADDED) {
+            setupBoidsMultithreaded();
+        } else if (executionModes == ExecutionModes.EXECUTOR) {
+            setupBoidsExecutor();
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
+    public ExecutionModes getMode() {
+        return this.executionMode;
     }
 
     private void stopSimulation() {
         if (parallelController != null) {
             view.ifPresent(BoidsView::unsetSimulationStateHandler);
             parallelController.stop();
+            model.stop();
         }
     }
 

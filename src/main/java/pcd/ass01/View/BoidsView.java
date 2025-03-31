@@ -1,6 +1,7 @@
 package pcd.ass01.View;
 
 import pcd.ass01.Controller.ExecutionModes;
+import pcd.ass01.Controller.ModeChanger;
 import pcd.ass01.Controller.SimulationStateHandler;
 import pcd.ass01.Model.BoidsProperty;
 
@@ -16,9 +17,12 @@ public class BoidsView implements ChangeListener {
     private BoidsPanel boidsPanel;
     private JSlider cohesionSlider, separationSlider, alignmentSlider, boidSlider;
     private JButton pauseResumeButton, simulationModeButton;
-    private BoidsProperty boidsProperty;
+    private final BoidsProperty boidsProperty;
+    private ModeChanger modeChanger;
     private SimulationStateHandler simulationStateHandler;
     private int width, height;
+
+    private final JPanel mainPanel;
 
     public BoidsView(BoidsProperty boidsProperty, int width, int height) {
         this.boidsProperty = boidsProperty;
@@ -29,14 +33,12 @@ public class BoidsView implements ChangeListener {
         frame.setSize(width, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel cp = new JPanel(new BorderLayout());
+        mainPanel = new JPanel(new BorderLayout());
 
         boidsPanel = new BoidsPanel(this, boidsProperty);
-        cp.add(BorderLayout.CENTER, boidsPanel);
+        mainPanel.add(BorderLayout.CENTER, boidsPanel);
 
-        cp.add(BorderLayout.SOUTH, createBottomPanel());
-
-        frame.setContentPane(cp);
+        frame.setContentPane(mainPanel);
         frame.setVisible(true);
     }
     
@@ -84,8 +86,10 @@ public class BoidsView implements ChangeListener {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
 
         JComboBox<ExecutionModes> comboBox = new JComboBox<>(ExecutionModes.values());
+        comboBox.setSelectedItem(modeChanger.getMode());
         comboBox.addActionListener(e -> {
             ExecutionModes selected = (ExecutionModes) comboBox.getSelectedItem();
+            modeChanger.changeMode(selected);
         });
 
         pauseResumeButton = new JButton("Pause");
@@ -182,6 +186,17 @@ public class BoidsView implements ChangeListener {
         } else if (e.getSource() == boidSlider) {
             boidsProperty.setNumberOfBoids(boidSlider.getValue());
         }
+    }
+
+    public void setModeChanger(ModeChanger modeChanger, SimulationStateHandler simulationStateHandler) {
+        if (this.modeChanger != null) {
+            return;
+        }
+        this.modeChanger = modeChanger;
+        mainPanel.add(BorderLayout.SOUTH, createBottomPanel());
+        frame.setContentPane(mainPanel);
+
+        setSimulationStateHandler(simulationStateHandler);
     }
 
     public void setSimulationStateHandler(SimulationStateHandler simulationStateHandler) {
