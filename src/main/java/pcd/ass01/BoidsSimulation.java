@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class BoidsSimulation {
 
-	final static int N_BOIDS = 1500;
+	final static int N_BOIDS = 5000;
 
 	final static double SEPARATION_WEIGHT = 1.0;
 	final static double ALIGNMENT_WEIGHT = 1.0;
@@ -27,14 +27,16 @@ public class BoidsSimulation {
 	final static int SCREEN_WIDTH = 800;
 	final static int SCREEN_HEIGHT = 800;
 
+	public final static int SEED = 1234;
+
 	public final static BoidPatterns.Pattern DEFAULT_PATTERN = new BoidPatterns.Pattern(Color.BLUE, ShapeType.CIRCLE);
 	/**
 	 * These two variables handle the test mode:
 	 * - THREAD_COUNT works only if PATTERN_BASED is set to true
 	 * - THREAD_COUNT must a number smaller than the total amount of patterns
 	 */
-	final static int THREAD_COUNT = 10;
-	final static BoidsSimulatorType SIMULATOR_TYPE = BoidsSimulatorType.VIRTUAL_THREADS;
+	final static int THREAD_COUNT = 1;
+	final static BoidsSimulatorType SIMULATOR_TYPE = BoidsSimulatorType.PLATFORM_THREADS;
 
 	public static void main(String[] args) {
 		var model = new BoidsModel(
@@ -45,8 +47,8 @@ public class BoidsSimulation {
 				PERCEPTION_RADIUS,
 				AVOID_RADIUS);
 
-		var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
-		var sim = new BoidsSimulator(model, Optional.of(view), SIMULATOR_TYPE);
+		//var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
+		var sim = new BoidsSimulator(model, Optional.empty(), SIMULATOR_TYPE);
 		sim.runSimulation();
 	}
 }

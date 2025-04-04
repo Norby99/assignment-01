@@ -74,7 +74,12 @@ public class BoidsSimulator {
 
     public void runSimulation() {
         parallelController.start();
-        while (true) {
+
+        var timeInit = System.currentTimeMillis();
+
+        int nIterations = 100;
+
+        while (nIterations > 0) {
             var t0 = System.currentTimeMillis();
             parallelController.update();
 
@@ -94,6 +99,10 @@ public class BoidsSimulator {
                     framerate = (int) (1000 / dtElapsed);
                 }
             }
+
+            nIterations--;
         }
+
+        System.out.println("Program exits in: " + (System.currentTimeMillis() - timeInit));
     }
 }
