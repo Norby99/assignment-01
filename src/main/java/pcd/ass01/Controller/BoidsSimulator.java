@@ -77,7 +77,7 @@ public class BoidsSimulator {
 
         var timeInit = System.currentTimeMillis();
 
-        int nIterations = 100;
+        int nIterations = 1000;
 
         while (nIterations > 0) {
             var t0 = System.currentTimeMillis();

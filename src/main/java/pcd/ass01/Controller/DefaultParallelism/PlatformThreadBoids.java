@@ -54,8 +54,7 @@ public class PlatformThreadBoids implements ParallelController, SimulationStateH
     }
 
     private void calculateNumberOfThreads() {
-        var numberOfAvailableProcessors = Runtime.getRuntime().availableProcessors() + 1;
-        numberOfThreads = Math.max(1, Math.min(numberOfAvailableProcessors, model.getBoids().size()));
+        numberOfThreads = 8;
     }
 
     private void createAndAssignBoidRunners() {
